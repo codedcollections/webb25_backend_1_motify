@@ -5,6 +5,20 @@ import { isPlaylistOwner } from '../middleware/ownership.js';
 
 const router = Router();
 
+router.get('/latest', async (req, res) => {
+  try {
+    const playlists = await Playlist.find()
+      .sort({ _id: -1 })
+      .limit(5)
+      .populate('songs', 'title')
+      .populate('user', 'email');
+    res.json(playlists);
+  } catch (err) {
+    console.error('Latest playlists failed:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/', async (req, res) => {
   try {
     const filter = {};
